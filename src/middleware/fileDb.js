@@ -3,6 +3,7 @@ const createUploadDb = require('../models/uploads.model')
 class FileDb {
 
     constructor(app) {
+        console.log("new FileDb");
         this.fileDb = createUploadDb(app);
     }
 
@@ -16,7 +17,7 @@ class FileDb {
             thus.fileDb.find(pathToCreate, function(err, docs) {
                 if (err) {
                     refuse(err);
-                } else if (docs.length === 0) {
+                } else if (!docs || docs.length === 0) {
                     thus.fileDb.insert(pathToCreate, function(err, insertedData) {
                         if (err) {
                             reject(err);
@@ -25,10 +26,10 @@ class FileDb {
                             resolve(insertedData._id);
                         }
                     });
-                } else if (docs.length === 1) {
+                } else if (docs && docs.length === 1) {
                     resolve(docs[0]._id);
                 } else {
-                    throw new Error("Too many entries for this path"); //TODO: Or return first object???
+                    refuse(new Error("Too many entries for this path")); //TODO: Or return first object???
                 }
             });
         });
@@ -40,10 +41,12 @@ class FileDb {
             fileDb.findOne({
                 _id: id
             }, function(err, doc) {
-                if (err) {
+                if (doc) {
+                    accept(doc.path);
+                } else if (err) {
                     refuse(err);
                 } else {
-                    accept(doc.path);
+                    refuse(new Error("Image " + id + " not found"))
                 }
             });
         });
@@ -57,10 +60,10 @@ class FileDb {
             }, function(err, docs) {
                 if (err) {
                     refuse(err);
-                } else if (docs.length === 0) {
+                } else if (docs && docs.length === 0) {
                     accept(undefined);
-                } else if (docs.length === 1) {
-                    accept(docs[0].path);
+                } else if (docs && docs.length === 1) {
+                    accept(docs[0]._id);
                 } else {
                     refuse(new Error("Too many files for this path"));
                 }

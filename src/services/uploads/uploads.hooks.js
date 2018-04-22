@@ -1,5 +1,5 @@
 const logger = require('../../hooks/logger');
-const fileDb = require('../../hooks/fileDb');
+const pathConverter = require('./pathConverter.hooks');
 const dauria = require('dauria');
 const {
     authenticate
@@ -12,10 +12,10 @@ const {
 
 module.exports = {
     before: {
-        all: [logger(), fileDb()],
+        all: [authenticate('jwt'), logger(), pathConverter()],
         find: [],
         get: [],
-        create: [authenticate('jwt'),
+        create: [
             function(hook) {
                 if (!hook.data.uri && hook.params.file) {
                     const file = hook.params.file;
@@ -26,28 +26,23 @@ module.exports = {
                 }
             }
         ],
-        update: [authenticate('jwt')],
-        patch: [authenticate('jwt')],
-        remove: [authenticate('jwt')]
+        update: [],
+        patch: [],
+        remove: []
     },
 
     after: {
-        all: [logger(), fileDb()],
+        all: [logger(), pathConverter()],
         find: [],
         get: [],
-        create: [
-            function(hook) {
-                const filePath = hook.service.Model.path + '/' + hook.result;
-                console.log(filePath);
-            }
-        ],
+        create: [],
         update: [],
         patch: [],
         remove: []
     },
 
     error: {
-        all: [logger(), fileDb()],
+        all: [logger()],
         find: [],
         get: [],
         create: [],

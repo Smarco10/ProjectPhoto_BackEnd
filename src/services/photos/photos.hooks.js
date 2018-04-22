@@ -3,30 +3,66 @@ const {
 } = require('@feathersjs/authentication').hooks;
 const logger = require('../../hooks/logger');
 const fileExistancyChecker = require('../../hooks/fileExistancyChecker');
-const fileDb = require('../../hooks/fileDb');
+const getFileDb = require('../../middleware/fileDb');
 
 module.exports = {
     before: {
         all: [logger()],
         find: [],
-        get: [fileDb(), fileExistancyChecker()],
-        create: [authenticate('jwt'), fileExistancyChecker()],
-        update: [authenticate('jwt'), fileExistancyChecker()],
-        patch: [authenticate('jwt'), fileExistancyChecker()],
-        remove: [authenticate('jwt')]
+        get: [
+            async function(hook) {
+                hook.id = await getFileDb(hook.app).idToPath(hook.id);
+            },
+            fileExistancyChecker()
+        ],
+        create: [
+            authenticate('jwt'),
+            async function(hook) {
+                hook.data.image = await getFileDb(hook.app).idToPath(hook.data.image);
+            },
+            fileExistancyChecker(),
+            async function(hook) {
+                hook.data.image = await getFileDb(hook.app).pathToId(hook.data.image);
+            },
+        ],
+        update: [
+            authenticate('jwt'),
+            async function(hook) {
+                hook.data.image = await getFileDb(hook.app).idToPath(hook.data.image);
+            },
+            fileExistancyChecker()
+        ],
+        patch: [
+            authenticate('jwt'),
+            async function(hook) {
+                hook.data.image = await getFileDb(hook.app).idToPath(hook.data.image);
+            },
+            fileExistancyChecker()
+        ],
+        remove: [
+            authenticate('jwt')
+        ]
     },
 
     after: {
         all: [logger()],
         find: [],
-        get: [fileDb(),
-            function(hook) {
-                console.log("after.get.result", hook.result);
+        get: [
+            async function(hook) {
+                hook.result.id = await getFileDb(hook.app).pathToId(hook.result.id);
             }
         ],
         create: [],
-        update: [],
-        patch: [],
+        update: [
+            async function(hook) {
+                hook.result.image = await getFileDb(hook.app).pathToId(hook.result.image);
+            }
+        ],
+        patch: [
+            async function(hook) {
+                hook.result.image = await getFileDb(hook.app).pathToId(hook.result.image);
+            }
+        ],
         remove: []
     },
 

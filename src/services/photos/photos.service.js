@@ -1,9 +1,6 @@
 const hooks = require('./photos.hooks');
 
-const path = require("path");
 const fs = require("fs");
-
-const uploadsDir = fs.realpathSync(path.join(__dirname, '../../../uploads'));
 
 const gm = require('gm').subClass({
     imageMagick: true
@@ -23,7 +20,7 @@ class PhotosService {
         this.slideDb = slideDb;
     }
 
-    getPhotoData(id, size, format) {
+    getPhotoData(filePath, size, format) {
 
         if (!size) {
             size = default_size;
@@ -31,42 +28,30 @@ class PhotosService {
         if (!format) {
             format = default_format;
         }
-        console.log("debug 1", size, format);
-        return new Promise(function(resolve, reject) {
 
-            if (uploadsDir !== undefined) {
-                var filePath = path.join(uploadsDir, id);
-                console.log("debug 2", filePath);
-                //use imagemagick resize: https://github.com/aheckmann/gm
-                gm(filePath)
-                    .resize(size.width, size.height)
-                    .toBuffer(format, function(err, buffer) {
-                        //TODO: retourne une erreur: Stream yields empty buffer, a tester en local sur un terminal
-                        if (!err) {
-                            console.log("debug 3");
-                            // Override the original data (so that people can't submit additional stuff)
-                            gm(buffer, "buffer." + format)
-                                .identify(function(err, metadata) {
-                                    if (!err) {
-                                        console.log("debug 4");
-                                        resolve({
-                                            id: id,
-                                            buffer: buffer,
-                                            metadata: metadata
-                                        });
-                                    } else {
-                                        console.log("debug 4 err");
-                                        reject(err);
-                                    }
-                                });
-                        } else {
-                            console.log("debug 3 err");
-                            reject(err);
-                        }
-                    });
-            } else {
-                reject(new Error("Error: PhotosService is not ready"));
-            }
+        return new Promise(function(resolve, reject) {
+            //use imagemagick resize: https://github.com/aheckmann/gm
+            gm(fs.realpathSync(filePath))
+                .resize(size.width, size.height)
+                .toBuffer(format, function(err, buffer) {
+                    if (!err) {
+                        // Override the original data (so that people can't submit additional stuff)
+                        gm(buffer, "buffer." + format)
+                            .identify(function(err, metadata) {
+                                if (!err) {
+                                    resolve({
+                                        id: filePath,
+                                        buffer: buffer,
+                                        metadata: metadata
+                                    });
+                                } else {
+                                    reject(err);
+                                }
+                            });
+                    } else {
+                        reject(err);
+                    }
+                });
         });
     }
 

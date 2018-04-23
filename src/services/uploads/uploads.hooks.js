@@ -1,4 +1,5 @@
 const logger = require('../../hooks/logger');
+const imageResizer = require('../../middleware/imageResizer');
 const pathConverter = require('./pathConverter.hooks');
 const dauria = require('dauria');
 const {
@@ -12,10 +13,15 @@ const {
 
 module.exports = {
     before: {
-        all: [authenticate('jwt'), logger(), pathConverter()],
+        all: [logger(), pathConverter()],
         find: [],
-        get: [],
-        create: [
+        get: [
+            async function(hook) {
+                const params = hook.params.query;
+                hook.result = await imageResizer(hook.id, params.size, params.format);
+            }
+        ],
+        create: [authenticate('jwt'),
             function(hook) {
                 if (!hook.data.uri && hook.params.file) {
                     const file = hook.params.file;
@@ -26,9 +32,9 @@ module.exports = {
                 }
             }
         ],
-        update: [],
-        patch: [],
-        remove: []
+        update: [authenticate('jwt')],
+        patch: [authenticate('jwt')],
+        remove: [authenticate('jwt')]
     },
 
     after: {

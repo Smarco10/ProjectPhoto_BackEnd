@@ -1,12 +1,17 @@
 const NeDB = require('nedb');
 const path = require('path');
 
-module.exports = function (app) {
-  const dbPath = app.get('nedb');
-  const Model = new NeDB({
-    filename: path.join(dbPath, 'uploads.db'),
-    autoload: true
-  });
+module.exports = function(app) {
+    const dbPath = app.get('nedb');
+    const Model = new NeDB({
+        filename: path.join(dbPath, 'uploads.db'),
+        autoload: true
+    });
 
-  return Model;
+    Model.ensureIndex({
+        fieldName: 'path',
+        unique: true
+    });
+
+    return Model;
 };

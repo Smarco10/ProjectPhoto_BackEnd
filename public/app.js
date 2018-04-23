@@ -84,21 +84,21 @@ client.configure(feathers.authentication({
 }));
 
 client.authenticate({
-    strategy: 'local',
-    email: 'martin.marcantoine@gmail.com',
-    password: 'MASTER'
+  strategy: 'local',
+  email: 'mma.depannage@gmail.com',
+  password: 'password'
 }).then((token) => {
-    console.log('User is logged in', token);
+  console.log('User is logged in', token);
+  
+  //TODO: a integrer dans myAwesomeDropzone, ce n'est pas generique
+  Dropzone.prototype.defaultOptions.withCredentials = true;
+  Dropzone.prototype.defaultOptions.jwtToken = token.accessToken;
 
-    //TODO: a integrer dans myAwesomeDropzone, ce n'est pas generique
-    Dropzone.prototype.defaultOptions.withCredentials = true;
-    Dropzone.prototype.defaultOptions.jwtToken = token.accessToken;
-
-    // At this point we have a valid token, so we can fetch restricted data.
-    //photos.find().then(page => page.data.forEach(addPhoto));
-    //photos.on('created', addPhoto);
-    //photos.get('image2.jpg').then(image => setImage(image)).catch(err => console.error(err));
-    photos.find().then(image => console.log(JSON.stringify(image))).catch(err => console.error(err));
-
-    uploads.on('created', doUploads);
+  // At this point we have a valid token, so we can fetch restricted data.
+  //photos.find().then(page => page.data.forEach(addPhoto));
+  //photos.on('created', addPhoto);
+  //photos.get('image2.jpg').then(image => setImage(image)).catch(err => console.error(err));
+  photos.find().then(image => console.log(JSON.stringify(image))).catch(err => console.error(err));
+  
+  uploads.on('created', doUploads);
 });

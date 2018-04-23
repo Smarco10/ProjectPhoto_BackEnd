@@ -86,8 +86,8 @@ client.configure(feathers.authentication({
 
 client.authenticate({
   strategy: 'local',
-  email: 'martin.marcantoine@gmail.com',
-  password: 'MASTER'
+  email: 'mma.depannage@gmail.com',
+  password: 'password'
 }).then((token) => {
   console.log('User is logged in', token);
   

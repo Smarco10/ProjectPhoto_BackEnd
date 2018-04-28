@@ -5,6 +5,7 @@ const dauria = require('dauria');
 const {
     authenticate
 } = require('@feathersjs/authentication').hooks;
+const permission = require('permission')
 
 // before-create Hook to get the file (if there is any)
 // and turn it into a datauri,
@@ -21,7 +22,9 @@ module.exports = {
                 hook.result = await imageResizer(hook.id, params.size, params.format);
             }
         ],
-        create: [authenticate('jwt'),
+        create: [
+            authenticate('jwt'),
+            permission(['admin']),
             function(hook) {
                 if (!hook.data.uri && hook.params.file) {
                     const file = hook.params.file;
@@ -32,9 +35,18 @@ module.exports = {
                 }
             }
         ],
-        update: [authenticate('jwt')],
-        patch: [authenticate('jwt')],
-        remove: [authenticate('jwt')]
+        update: [
+            authenticate('jwt'),
+            permission(['admin'])
+        ],
+        patch: [
+            authenticate('jwt'),
+            permission(['admin'])
+        ],
+        remove: [
+            authenticate('jwt'),
+            permission(['admin'])
+        ]
     },
 
     after: {

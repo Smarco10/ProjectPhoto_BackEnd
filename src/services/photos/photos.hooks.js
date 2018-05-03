@@ -5,6 +5,10 @@ const logger = require('../../hooks/logger');
 const fileExistancyChecker = require('../../hooks/fileExistancyChecker');
 const getFileDb = require('../../middleware/fileDb');
 
+const {
+    restrictToRoles
+} = require('feathers-authentication-hooks');
+
 module.exports = {
     before: {
         all: [logger()],

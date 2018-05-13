@@ -11,7 +11,11 @@ const {
     restrictToRoles
 } = require('feathers-authentication-hooks');
 
-const commonHooks = require('feathers-hooks-common'); //TODO: to use for validation of password and email: https://feathers-plus.github.io/v1/feathers-hooks-common/guide.html#Validate
+const {
+    getItems
+} = require('feathers-hooks-common'); // used for validation of password and email: https://feathers-plus.github.io/v1/feathers-hooks-common/guide.html#Validate
+
+const Joi = require('joi'); //https://github.com/hapijs/joi/blob/v13.3.0/API.md
 
 const {
     SKIP
@@ -20,7 +24,23 @@ const errors = require('@feathersjs/errors');
 
 const logger = require('../../hooks/logger');
 
-const allowedRoles = ['admin'];
+//XXX const sanitizeData = require('./sanitizeData.hook');
+const shemas = require('../../hooks/shemas');
+
+const {
+    HookMethods,
+    UserPermissions,
+    UserCreateDataValidators,
+    UserPatchDataValidators
+} = require('../../commons');
+
+const allowedRoles = [UserPermissions.ADMIN];
+
+function validateData(validators) {
+    return function(hook) {
+        Joi.validate(getItems(hook), shemas.generate(validators), shemas.options);
+    };
+}
 
 function restrict(ownerAllowed) {
     let restrictHooks = [
@@ -48,12 +68,12 @@ function restrict(ownerAllowed) {
             if (!hasAllowedRole) {
                 //User is a non-admin owner
                 switch (hook.method) {
-                    case "patch":
+                    case HookMethods.PATCH:
                         if (!!hook.data) {
                             delete hook.data.permissions;
                         }
                         break;
-                    case "update":
+                    case HookMethods.UPDATE:
                         throw new errors.Forbidden("Non admin users are not allowed to update themself");
                         break;
                     default:
@@ -66,7 +86,7 @@ function restrict(ownerAllowed) {
     return restrictHooks;
 };
 
-function checkPassword(passwordFieldName, needToBePresent) {
+/*function checkPassword(passwordFieldName, needToBePresent) {
     return function(hook) {
         if (hook.data[passwordFieldName] === undefined || hook.data[passwordFieldName].trim() === "") {
             if (needToBePresent) {
@@ -76,16 +96,31 @@ function checkPassword(passwordFieldName, needToBePresent) {
             }
         }
     }
-}
+}*/
 
 module.exports = {
     before: {
         all: [logger()],
         find: [...restrict(false)],
         get: [...restrict(true)],
-        create: [...restrict(false), checkPassword('password', true), hashPassword()],
-        update: [...restrict(true), checkPassword('password', false), hashPassword()],
-        patch: [...restrict(true), checkPassword('password', false), hashPassword()],
+        create: [
+            ...restrict(false),
+            validateData(UserCreateDataValidators),
+            //checkPassword('password', true), //XXX: useless with validateData
+            hashPassword()
+        ],
+        update: [
+            ...restrict(true),
+            validateData(UserPatchDataValidators),
+            //checkPassword('password', false), //XXX: useless with validateData
+            hashPassword()
+        ],
+        patch: [
+            ...restrict(true),
+            validateData(UserPatchDataValidators),
+            //checkPassword('password', false), //XXX: useless with validateData
+            hashPassword()
+        ],
         remove: [...restrict(true)]
     },
 

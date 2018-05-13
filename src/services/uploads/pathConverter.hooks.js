@@ -1,4 +1,8 @@
 // A hook that check if a file exists or not on the server
+const {
+    HookMethods,
+    HookTypes
+} = require('../../commons');
 const getFileDb = require('../../middleware/fileDb');
 
 module.exports = function() {
@@ -7,38 +11,38 @@ module.exports = function() {
         var fileDb = getFileDb(hook.app);
 
         switch (hook.type) {
-            case 'before':
+            case HookTypes.BEFORE:
                 switch (hook.method) {
-                    case 'create':
+                    case HookMethods.CREATE:
                         if (hook.data && hook.data.uri) {
                             await fileDb.checkMimeType(hook.data.uri);
                         }
                         break;
-                    case 'update':
-                    case 'patche':
+                    case HookMethods.UPDATE:
+                    case HookMethods.PATCH:
                         if (hook.data && hook.data.uri) {
                             await fileDb.checkMimeType(hook.data.uri);
                         }
-                    case 'get':
-                    case 'remove':
+                    case HookMethods.GET:
+                    case HookMethods.REMOVE:
                         hook.id = await fileDb.idToPath(hook.id);
                         break;
                     default:
                         break;
                 }
                 break;
-            case 'after':
+            case HookTypes.AFTER:
                 switch (hook.method) {
-                    case 'create':
+                    case HookMethods.CREATE:
                         const filePath = require("path").join(hook.service.Model.path, hook.result.id);
                         hook.result.id = await fileDb.createEntry(filePath);
                         break;
-                    case 'get':
-                    case 'update':
-                    case 'patche':
+                    case HookMethods.GET:
+                    case HookMethods.UPDATE:
+                    case HookMethods.PATCH:
                         hook.result.id = await fileDb.pathToId(hook.result.id);
                         break;
-                    case 'remove':
+                    case HookMethods.REMOVE:
                         hook.result.id = await fileDb.pathToId(hook.result.id);
                         await fileDb.removeEntry(hook.result.id);
                         break;

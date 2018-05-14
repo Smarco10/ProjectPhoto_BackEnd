@@ -6,20 +6,28 @@ class ConfigurationService {
 
     setup(app, path) {}
 
-    find(params) {}
+    find(params) {
+        //TODO all configurations allowed with their id
+    }
 
     get(id, param) {
+        //TODO return config associated to the id if it is allowed to
     }
 
     create(data, params) {
+        //TODO create a new config: only for allowed
     }
 
     update(id, data, params) {
+        //TODO update config if allowed
+    }
 
     patch(id, data, params) {
+        //TODO patch config if allowed
     }
 
     remove(id, params) {
+        //TODO remove config if allowed
     }
 }
 

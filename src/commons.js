@@ -14,9 +14,13 @@ const HookMethods = Object.freeze({
     REMOVE: 'remove'
 });
 
-const UserPermissions = Object.freeze({
-    ADMIN: "admin",
-    USER: "user"
+const ConfigurationTypes = Object.freeze({
+    PERMISSIONS: "permissions"
+});
+
+const PermissionsTypes = Object.freeze({
+    ALL: "all",
+    ADMIN: "admin"
 });
 
 const DataValidatorsTypes = Object.freeze({
@@ -38,7 +42,7 @@ const PasswordValidator = Object.freeze({
 
 const PermissionsValidator = Object.freeze({
     type: DataValidatorsTypes.SUBSET,
-    subsetOf: Object.values(UserPermissions)
+    subsetOf: [] //TODO: replace by checking in the database Object.values(UserPermissions)
 });
 
 const UserCreateDataValidators = Object.freeze({
@@ -58,7 +62,8 @@ const UserPatchDataValidators = Object.freeze({
 module.exports = {
     HookTypes,
     HookMethods,
-    UserPermissions,
+    ConfigurationTypes,
+    PermissionsTypes,
     DataValidatorsTypes,
     UserCreateDataValidators,
     UserPatchDataValidators

@@ -1,5 +1,9 @@
 const hooks = require('./configuration.hooks');
 
+const {
+    UserPermissions
+} = require('../../commons');
+
 class ConfigurationService {
 
     constructor() {}
@@ -8,6 +12,11 @@ class ConfigurationService {
 
     find(params) {
         //TODO all configurations allowed with their id
+        return new Promise(resolve => {
+            resolve({
+                permissions: UserPermissions
+            });
+        });
     }
 
     get(id, param) {

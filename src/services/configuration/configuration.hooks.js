@@ -13,7 +13,7 @@ const {
 
 const allowedRoles = [UserPermissions.ADMIN];
 
-function restrict = [
+restrict = [
     authenticate('jwt'),
     restrictToRoles({
         roles: allowedRoles,

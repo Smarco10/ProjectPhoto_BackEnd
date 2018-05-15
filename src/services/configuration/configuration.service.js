@@ -1,12 +1,18 @@
 const hooks = require('./configuration.hooks');
 
 const {
-    UserPermissions
+    UserPermissions,
+    UserCreateDataValidators,
+    UserPatchDataValidators
 } = require('../../commons');
 
 
 const conf = {
-    permissions: UserPermissions
+    permissions: UserPermissions,
+    validators: {
+        userCreateData: UserCreateDataValidators,
+        uerPatchData: UserPatchDataValidators
+    }
 };
 
 class ConfigurationService {
@@ -47,7 +53,7 @@ class ConfigurationService {
 module.exports = function() {
     const app = this;
 
-    app.use('/configuration', new configurationService());
+    app.use('/configuration', new ConfigurationService());
 
     // Get our initialized service so that we can register hooks and channels
     app.service('configuration').hooks(hooks);

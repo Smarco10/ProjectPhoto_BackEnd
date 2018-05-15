@@ -49,7 +49,7 @@ module.exports = {
     },
     generate: function(validators) {
         var joiKeys = {};
-        for (let key of Object.keys(validator)) {
+        for (let key of Object.keys(validators)) {
             joiKeys[key] = generateShema(validators[key]);
         }
         return Joi.object().keys(joiKeys);

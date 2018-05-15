@@ -4,6 +4,11 @@ const {
     UserPermissions
 } = require('../../commons');
 
+
+const conf = {
+    permissions: UserPermissions
+};
+
 class ConfigurationService {
 
     constructor() {}
@@ -11,16 +16,15 @@ class ConfigurationService {
     setup(app, path) {}
 
     find(params) {
-        //TODO all configurations allowed with their id
         return new Promise(resolve => {
-            resolve({
-                permissions: UserPermissions
-            });
+            resolve(conf);
         });
     }
 
     get(id, param) {
-        //TODO return config associated to the id if it is allowed to
+        return new Promise(resolve => {
+            resolve(conf[id]);
+        });
     }
 
     create(data, params) {

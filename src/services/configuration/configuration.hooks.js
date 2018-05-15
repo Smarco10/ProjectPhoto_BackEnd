@@ -31,16 +31,16 @@ module.exports = {
         find: [],
         get: [],
         create: [
-            authenticate('jwt')
+            ...restrict
         ],
         update: [
-            authenticate('jwt')
+            ...restrict
         ],
         patch: [
-            authenticate('jwt')
+            ...restrict
         ],
         remove: [
-            authenticate('jwt')
+            ...restrict
         ]
     },
 

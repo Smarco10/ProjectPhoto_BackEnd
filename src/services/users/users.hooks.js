@@ -29,11 +29,12 @@ const shemas = require('../../hooks/shemas');
 
 const {
     HookMethods,
-    PermissionsTypes,
+    UserPermissions,
     UserCreateDataValidators,
     UserPatchDataValidators
 } = require('../../commons');
-const restrictToPermissions = require('../../hooks/restrictToPermissions');
+
+const allowedRoles = [UserPermissions.ADMIN];
 
 function validateData(validators) {
     return function(hook) {
@@ -44,7 +45,13 @@ function validateData(validators) {
 function restrict(ownerAllowed) {
     let restrictHooks = [
         authenticate('jwt'),
-        restrictToPermissions(PermissionsTypes.ADMIN, ownerAllowed)
+        restrictToRoles({
+            roles: allowedRoles,
+            fieldName: 'permissions', //The field on your user object that denotes their role or roles
+            idField: '_id', //The id field on your user object
+            ownerField: '_id', //The id field for a user on your resource
+            owner: ownerAllowed // Denotes whether it should also allow owners regardless of their role (ie. the user has the role or is an owner)
+        })
     ];
 
     if (ownerAllowed) {
@@ -114,9 +121,7 @@ module.exports = {
             //checkPassword('password', false), //XXX: useless with validateData
             hashPassword()
         ],
-        remove: [...restrict(true)
-            //TODO: do not allow to delete user that is the last admin
-        ]
+        remove: [...restrict(true)]
     },
 
     after: {

@@ -1,35 +1,46 @@
 const {
     authenticate
 } = require('@feathersjs/authentication').hooks;
-
-const {
-    PermissionsTypes
-} = require('../../commons');
-const restrictToPermissions = require('../../hooks/restrictToPermissions');
-
 const logger = require('../../hooks/logger');
 
-restrict = [
+const {
+    restrictToRoles
+} = require('feathers-authentication-hooks');
+
+const {
+    UserPermissions
+} = require('../../commons');
+
+const allowedRoles = [UserPermissions.ADMIN];
+
+function restrict = [
     authenticate('jwt'),
-    restrictToPermissions(PermissionsTypes.ADMIN, false) //owner not allowed
+    restrictToRoles({
+        roles: allowedRoles,
+        fieldName: 'permissions', //The field on your user object that denotes their role or roles
+        idField: '_id', //The id field on your user object
+        ownerField: '_id', //The id field for a user on your resource
+        owner: false // Denotes whether it should also allow owners regardless of their role (ie. the user has the role or is an owner)
+    })
 ];
+
 
 module.exports = {
     before: {
         all: [logger()],
-        find: [], //used by restrictToPermissions
+        find: [],
         get: [],
         create: [
-            //...restrict //TODO: restore when first permissions will be added
+            authenticate('jwt')
         ],
         update: [
-            ...restrict
+            authenticate('jwt')
         ],
         patch: [
-            ...restrict
+            authenticate('jwt')
         ],
         remove: [
-            ...restrict
+            authenticate('jwt')
         ]
     },
 

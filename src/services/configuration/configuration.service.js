@@ -1,21 +1,40 @@
-// Initializes the `users` service on path `/users`
-const createService = require('feathers-nedb');
-const createModel = require('../../models/configuration.model');
 const hooks = require('./configuration.hooks');
+
+class ConfigurationService {
+
+    constructor() {}
+
+    setup(app, path) {}
+
+    find(params) {
+        //TODO all configurations allowed with their id
+    }
+
+    get(id, param) {
+        //TODO return config associated to the id if it is allowed to
+    }
+
+    create(data, params) {
+        //TODO create a new config: only for allowed
+    }
+
+    update(id, data, params) {
+        //TODO update config if allowed
+    }
+
+    patch(id, data, params) {
+        //TODO patch config if allowed
+    }
+
+    remove(id, params) {
+        //TODO remove config if allowed
+    }
+}
 
 module.exports = function() {
     const app = this;
-    const Model = createModel(app);
-    const paginate = app.get('paginate');
 
-    const options = {
-        name: 'configuration',
-        Model,
-        paginate
-    };
-
-    // Initialize our service with any options it requires
-    app.use('/configuration', createService(options));
+    app.use('/configuration', new configurationService());
 
     // Get our initialized service so that we can register hooks and channels
     app.service('configuration').hooks(hooks);

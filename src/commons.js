@@ -32,8 +32,7 @@ const EmailValidator = Object.freeze({
 
 const PasswordValidator = Object.freeze({
     type: DataValidatorsTypes.STRING,
-    pattern: /^[\sa-zA-Z0-9]$/,
-    min: 5
+    pattern: "^.{5,}$"
 });
 
 const PermissionsValidator = Object.freeze({

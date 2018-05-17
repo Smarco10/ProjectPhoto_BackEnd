@@ -13,7 +13,7 @@ function generateShema(validator) {
                 break;
 
             case DataValidatorsTypes.STRING:
-                shema = Joi.string().regex(validator.pattern);
+                shema = Joi.string().regex(new RegExp(validator.pattern));
 
                 if (validator.min) {
                     shema = shema.min(validator.min);

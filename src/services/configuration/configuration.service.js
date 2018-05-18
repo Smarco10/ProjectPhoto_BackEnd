@@ -11,7 +11,7 @@ const conf = {
     permissions: UserPermissions,
     validators: {
         userCreateData: UserCreateDataValidators,
-        uerPatchData: UserPatchDataValidators
+        userPatchData: UserPatchDataValidators
     }
 };
 

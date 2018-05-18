@@ -86,18 +86,6 @@ function restrict(ownerAllowed) {
     return restrictHooks;
 };
 
-/*function checkPassword(passwordFieldName, needToBePresent) {
-    return function(hook) {
-        if (hook.data[passwordFieldName] === undefined || hook.data[passwordFieldName].trim() === "") {
-            if (needToBePresent) {
-                throw new errors.BadRequest('Password is not valid');
-            } else {
-                return SKIP;
-            }
-        }
-    }
-}*/
-
 module.exports = {
     before: {
         all: [logger()],
@@ -106,19 +94,16 @@ module.exports = {
         create: [
             ...restrict(false),
             validateData(UserCreateDataValidators),
-            //checkPassword('password', true), //XXX: useless with validateData
             hashPassword()
         ],
         update: [
             ...restrict(true),
             validateData(UserPatchDataValidators),
-            //checkPassword('password', false), //XXX: useless with validateData
             hashPassword()
         ],
         patch: [
             ...restrict(true),
             validateData(UserPatchDataValidators),
-            //checkPassword('password', false), //XXX: useless with validateData
             hashPassword()
         ],
         remove: [...restrict(true)]

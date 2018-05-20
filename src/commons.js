@@ -19,47 +19,55 @@ const UserPermissions = Object.freeze({
     USER: "user"
 });
 
-const DataValidatorsTypes = Object.freeze({
+const DataValidatorShemasTypes = Object.freeze({
     EMAIL: "email",
     STRING: "string",
     SUBSET: "subset"
 });
 
-const EmailValidator = Object.freeze({
+const EmailValidatorShema = Object.freeze({
     required: true,
-    type: DataValidatorsTypes.EMAIL
+    type: DataValidatorShemasTypes.EMAIL
 });
 
-const PasswordValidator = Object.freeze({
-    type: DataValidatorsTypes.STRING,
+const PasswordValidatorShema = Object.freeze({
+    type: DataValidatorShemasTypes.STRING,
     pattern: "^.*$",
-    min: 8
+    min: 5
 });
 
-const PermissionsValidator = Object.freeze({
-    type: DataValidatorsTypes.SUBSET,
+const PermissionsValidatorShema = Object.freeze({
+    type: DataValidatorShemasTypes.SUBSET,
     subsetOf: Object.values(UserPermissions)
 });
 
-const UserCreateDataValidators = Object.freeze({
-    email: EmailValidator,
-    password: Object.assign({}, PasswordValidator, {
+const UserCreateDataValidatorShemas = Object.freeze({
+    email: EmailValidatorShema,
+    password: Object.assign({}, PasswordValidatorShema, {
         required: true
     }),
-    permissions: PermissionsValidator
+    permissions: PermissionsValidatorShema
 });
 
-const UserPatchDataValidators = Object.freeze({
-    email: EmailValidator,
-    password: PasswordValidator,
-    permissions: PermissionsValidator
+const UserPatchDataValidatorShemas = Object.freeze({
+    email: EmailValidatorShema,
+    password: PasswordValidatorShema,
+    permissions: PermissionsValidatorShema
+});
+
+const LoginDataValidatorShemas = Object.freeze({
+    email: EmailValidatorShema,
+    password: Object.assign({}, PasswordValidatorShema, {
+        required: true
+    })
 });
 
 module.exports = {
     HookTypes,
     HookMethods,
     UserPermissions,
-    DataValidatorsTypes,
-    UserCreateDataValidators,
-    UserPatchDataValidators
+    DataValidatorShemasTypes,
+    UserCreateDataValidatorShemas,
+    UserPatchDataValidatorShemas,
+    LoginDataValidatorShemas
 };

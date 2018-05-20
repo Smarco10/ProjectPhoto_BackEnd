@@ -31,7 +31,8 @@ const {
     HookMethods,
     UserPermissions,
     UserCreateDataValidators,
-    UserPatchDataValidators
+    UserPatchDataValidators,
+    LoginDataValidators
 } = require('../../commons');
 
 const allowedRoles = [UserPermissions.ADMIN];
@@ -83,30 +84,33 @@ function restrict(ownerAllowed) {
         });
     }
 
-    return restrictHooks;
+    return ...restrictHooks;
 };
 
 module.exports = {
     before: {
         all: [logger()],
-        find: [...restrict(false)],
-        get: [...restrict(true)],
+        find: [restrict(false)],
+        get: [
+            //validateData(LoginDataValidators), //TODO: est-ce que c'est possible???
+            restrict(true)
+        ],
         create: [
-            ...restrict(false),
+            restrict(false),
             validateData(UserCreateDataValidators),
             hashPassword()
         ],
         update: [
-            ...restrict(true),
+            restrict(true),
             validateData(UserPatchDataValidators),
             hashPassword()
         ],
         patch: [
-            ...restrict(true),
+            restrict(true),
             validateData(UserPatchDataValidators),
             hashPassword()
         ],
-        remove: [...restrict(true)]
+        remove: [restrict(true)]
     },
 
     after: {

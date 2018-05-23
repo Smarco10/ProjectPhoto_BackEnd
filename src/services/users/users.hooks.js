@@ -23,8 +23,6 @@ const {
 const errors = require('@feathersjs/errors');
 
 const logger = require('../../hooks/logger');
-
-//XXX const sanitizeData = require('./sanitizeData.hook');
 const shemas = require('../../hooks/shemas');
 
 const {

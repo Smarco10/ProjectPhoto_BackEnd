@@ -12,7 +12,9 @@ const {
 module.exports = {
     before: {
         all: [logger()],
-        find: [],
+        find: [function(hook) {
+            console.log("photo.find.hook", hook);
+        }],
         get: [
             async function(hook) {
                 hook.id = await getFileDb(hook.app).idToPath(hook.id);

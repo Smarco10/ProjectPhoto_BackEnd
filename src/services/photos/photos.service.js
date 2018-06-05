@@ -10,13 +10,9 @@ class PhotosService {
     setup(app, path) {}
 
     find(params) {
-        //TODO: pk param.query is empty???
-        console.log("photo.find", params);
         let slideDb = this.slideDb;
         return new Promise(function(accept, refuse) {
-            var query = params.query;
-
-            slideDb.find(query, function(err, docs) {
+            slideDb.find(params.query, function(err, docs) {
                 if (err) {
                     refuse(err);
                 } else {

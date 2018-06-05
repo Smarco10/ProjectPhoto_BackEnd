@@ -22,7 +22,14 @@ const UserPermissions = Object.freeze({
 const DataValidatorShemasTypes = Object.freeze({
     EMAIL: "email",
     STRING: "string",
-    SUBSET: "subset"
+    ARRAY: "array"
+});
+
+const BdIdValidatorShema = Object.freeze({
+    type: DataValidatorShemasTypes.STRING,
+    pattern: "^[a-zA-Z0-9]{16}$",
+    min: 16,
+    max: 16
 });
 
 const EmailValidatorShema = Object.freeze({
@@ -62,12 +69,77 @@ const LoginDataValidatorShemas = Object.freeze({
     })
 });
 
+const SlideCreateDataValidatorShemas = Object.freeze({
+    title: {
+        required: true,
+        type: DataValidatorShemasTypes.STRING
+    },
+    image: Object.assign({}, BdIdValidatorShema, {
+        required: true
+    }),
+    text: {
+        type: DataValidatorShemasTypes.STRING
+    }
+});
+
+const SlidePatchDataValidatorShemas = Object.freeze({
+    title: {
+        type: DataValidatorShemasTypes.STRING
+    },
+    image: BdIdValidatorShema,
+    text: {
+        type: DataValidatorShemasTypes.STRING
+    }
+});
+
+const AlbumCreateDataValidatorShemas = Object.freeze({
+    title: {
+        required: true,
+        type: DataValidatorShemasTypes.STRING
+    },
+    image: Object.assign({}, BdIdValidatorShema, {
+        required: true
+    }),
+    slides: {
+        required: true,
+        type: DataValidatorShemasTypes.ARRAY,
+        eltShema: BdIdValidatorShema
+    }
+});
+
+const AlbumPatchDataValidatorShemas = Object.freeze({
+    title: {
+        type: DataValidatorShemasTypes.STRING
+    },
+    image: BdIdValidatorShema,
+    slides: {
+        type: DataValidatorShemasTypes.ARRAY,
+        eltType: BdIdValidatorShema
+    }
+});
+
+var DataValidatorShemas = {};
+
+DataValidatorShemas[HookMethods.CREATE] = {
+    user: UserCreateDataValidatorShemas,
+    slide: SlideCreateDataValidatorShemas,
+    album: AlbumCreateDataValidatorShemas
+};
+DataValidatorShemas[HookMethods.PATCH] = {
+    user: UserPatchDataValidatorShemas,
+    slide: SlidePatchDataValidatorShemas,
+    album: AlbumPatchDataValidatorShemas
+};
+DataValidatorShemas[HookMethods.UPDATE] = {
+    user: UserPatchDataValidatorShemas,
+    slide: SlidePatchDataValidatorShemas,
+    album: AlbumPatchDataValidatorShemas
+};
+
 module.exports = {
     HookTypes,
     HookMethods,
     UserPermissions,
-    DataValidatorShemasTypes,
-    UserCreateDataValidatorShemas,
-    UserPatchDataValidatorShemas,
+    DataValidatorShemas,
     LoginDataValidatorShemas
 };

@@ -28,15 +28,20 @@ const shemas = require('../../hooks/shemas');
 const {
     HookMethods,
     UserPermissions,
-    UserCreateDataValidators,
-    UserPatchDataValidators
+    DataValidatorShemas
 } = require('../../commons');
 
 const allowedRoles = [UserPermissions.ADMIN];
 
 function validateData(validators) {
     return function(hook) {
-        Joi.validate(getItems(hook), shemas.generate(validators), shemas.options);
+        if (!!validators[hook.method]) {
+            Joi.validate(getItems(hook), shemas.generate(validators[hook.method].user), shemas.options);
+        } else {
+            throw new errors.BadRequest('Invalid Parameters', {
+                errors: 'Data received are not allowed here'
+            });
+        }
     };
 }
 
@@ -94,17 +99,17 @@ module.exports = {
         ],
         create: [
             ...restrict(false),
-            validateData(UserCreateDataValidators),
+            validateData(DataValidatorShemas),
             hashPassword()
         ],
         update: [
             ...restrict(true),
-            validateData(UserPatchDataValidators),
+            validateData(DataValidatorShemas),
             hashPassword()
         ],
         patch: [
             ...restrict(true),
-            validateData(UserPatchDataValidators),
+            validateData(DataValidatorShemas),
             hashPassword()
         ],
         remove: [...restrict(true)]

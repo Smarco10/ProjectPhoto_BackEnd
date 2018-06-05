@@ -24,8 +24,21 @@ function generateShema(validator) {
                 }
                 break;
 
-            case DataValidatorsTypes.SUBSET:
-                shema = Joi.array().items(Joi.string().valid(validator.subsetOf));
+            case DataValidatorsTypes.ARRAY:
+                shema = Joi.array();
+
+                eltShema = Joi.any();
+
+                if (!!validator.eltShema) {
+                    eltShema = generateShema(validator.eltShema);
+                }
+
+                if (!!validator.subsetOf) {
+                    eltShema = eltShema.valid(validator.subsetOf);
+                }
+
+                shema = shema.items(eltShema);
+
                 break;
 
             default:

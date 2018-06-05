@@ -1,6 +1,7 @@
 const {
     authenticate
 } = require('@feathersjs/authentication').hooks;
+const errors = require('@feathersjs/errors');
 
 const {
     restrictToRoles
@@ -9,8 +10,21 @@ const {
 const logger = require('../../hooks/logger');
 
 const {
-    UserPermissions
+    UserPermissions,
+    DataValidatorShemas
 } = require('../../commons');
+
+function validateData(validators) {
+    return function(hook) {
+        if (!!validators[hook.method]) {
+            Joi.validate(getItems(hook), shemas.generate(validators[hook.method].album), shemas.options);
+        } else {
+            throw new errors.BadRequest('Invalid Parameters', {
+                errors: 'Data received are not allowed here'
+            });
+        }
+    };
+}
 
 const allowedRoles = [UserPermissions.ADMIN];
 
@@ -30,9 +44,18 @@ module.exports = {
         all: [logger()],
         find: [],
         get: [],
-        create: [...restrictHooks],
-        update: [...restrictHooks],
-        patch: [...restrictHooks],
+        create: [
+            ...restrictHooks,
+            validateData(DataValidatorShemas)
+        ],
+        update: [
+            ...restrictHooks,
+            validateData(DataValidatorShemas)
+        ],
+        patch: [
+            ...restrictHooks,
+            validateData(DataValidatorShemas)
+        ],
         remove: [...restrictHooks]
     },
 

@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const {
-    DataValidatorsTypes
+    DataValidatorShemasTypes
 } = require('../commons');
 
 function generateShema(validator) {
@@ -8,11 +8,11 @@ function generateShema(validator) {
 
     if (!!validator) {
         switch (validator.type) {
-            case DataValidatorsTypes.EMAIL:
+            case DataValidatorShemasTypes.EMAIL:
                 shema = Joi.string().trim().email();
                 break;
 
-            case DataValidatorsTypes.STRING:
+            case DataValidatorShemasTypes.STRING:
                 shema = Joi.string().regex(new RegExp(validator.pattern));
 
                 if (validator.min) {
@@ -24,7 +24,7 @@ function generateShema(validator) {
                 }
                 break;
 
-            case DataValidatorsTypes.ARRAY:
+            case DataValidatorShemasTypes.ARRAY:
                 shema = Joi.array();
 
                 eltShema = Joi.any();

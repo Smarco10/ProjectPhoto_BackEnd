@@ -7,9 +7,14 @@ const {
     restrictToRoles
 } = require('feathers-authentication-hooks');
 
+const {
+    getItems
+} = require('feathers-hooks-common');
+
 const Joi = require('joi'); //https://github.com/hapijs/joi/blob/v13.3.0/API.md
 
 const logger = require('../../hooks/logger');
+const shemas = require('../../hooks/shemas');
 const fileExistancyChecker = require('../../hooks/fileExistancyChecker');
 const getFileDb = require('../../middleware/fileDb');
 

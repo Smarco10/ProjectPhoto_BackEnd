@@ -147,5 +147,6 @@ module.exports = {
     HookTypes,
     HookMethods,
     UserPermissions,
+    DataValidatorShemasTypes,
     DataValidatorShemas
 };

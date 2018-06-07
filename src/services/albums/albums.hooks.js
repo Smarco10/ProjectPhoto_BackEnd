@@ -6,8 +6,14 @@ const errors = require('@feathersjs/errors');
 const {
     restrictToRoles
 } = require('feathers-authentication-hooks');
+const {
+    getItems
+} = require('feathers-hooks-common');
+
+const Joi = require('joi'); //https://github.com/hapijs/joi/blob/v13.3.0/API.md
 
 const logger = require('../../hooks/logger');
+const shemas = require('../../hooks/shemas');
 
 const {
     UserPermissions,

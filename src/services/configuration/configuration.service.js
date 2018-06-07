@@ -2,19 +2,13 @@ const hooks = require('./configuration.hooks');
 
 const {
     UserPermissions,
-    UserCreateDataValidatorShemas,
-    UserPatchDataValidatorShemas,
-    LoginDataValidatorShemas
+    DataValidatorShemas
 } = require('../../commons');
 
 
 const conf = Object.freeze({
     permissions: UserPermissions,
-    validatorShemas: {
-        userCreateData: UserCreateDataValidatorShemas,
-        userPatchData: UserPatchDataValidatorShemas,
-        loginData: LoginDataValidatorShemas
-    }
+    validatorShemas: DataValidatorShemas
 });
 
 class ConfigurationService {

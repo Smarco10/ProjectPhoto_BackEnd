@@ -44,7 +44,7 @@ const PasswordValidatorShema = Object.freeze({
 });
 
 const PermissionsValidatorShema = Object.freeze({
-    type: DataValidatorShemasTypes.SUBSET,
+    type: DataValidatorShemasTypes.ARRAY,
     subsetOf: Object.values(UserPermissions)
 });
 
@@ -72,7 +72,8 @@ const LoginDataValidatorShemas = Object.freeze({
 const SlideCreateDataValidatorShemas = Object.freeze({
     title: {
         required: true,
-        type: DataValidatorShemasTypes.STRING
+        type: DataValidatorShemasTypes.STRING,
+        min: 1
     },
     image: Object.assign({}, BdIdValidatorShema, {
         required: true
@@ -84,7 +85,8 @@ const SlideCreateDataValidatorShemas = Object.freeze({
 
 const SlidePatchDataValidatorShemas = Object.freeze({
     title: {
-        type: DataValidatorShemasTypes.STRING
+        type: DataValidatorShemasTypes.STRING,
+        min: 1
     },
     image: BdIdValidatorShema,
     text: {
@@ -95,7 +97,8 @@ const SlidePatchDataValidatorShemas = Object.freeze({
 const AlbumCreateDataValidatorShemas = Object.freeze({
     title: {
         required: true,
-        type: DataValidatorShemasTypes.STRING
+        type: DataValidatorShemasTypes.STRING,
+        min: 1
     },
     image: Object.assign({}, BdIdValidatorShema, {
         required: true
@@ -109,12 +112,13 @@ const AlbumCreateDataValidatorShemas = Object.freeze({
 
 const AlbumPatchDataValidatorShemas = Object.freeze({
     title: {
-        type: DataValidatorShemasTypes.STRING
+        type: DataValidatorShemasTypes.STRING,
+        min: 1
     },
     image: BdIdValidatorShema,
     slides: {
         type: DataValidatorShemasTypes.ARRAY,
-        eltType: BdIdValidatorShema
+        eltShema: BdIdValidatorShema
     }
 });
 
@@ -135,11 +139,13 @@ DataValidatorShemas[HookMethods.UPDATE] = {
     slide: SlidePatchDataValidatorShemas,
     album: AlbumPatchDataValidatorShemas
 };
+DataValidatorShemas[HookMethods.GET] = {
+    user: LoginDataValidatorShemas
+}
 
 module.exports = {
     HookTypes,
     HookMethods,
     UserPermissions,
-    DataValidatorShemas,
-    LoginDataValidatorShemas
+    DataValidatorShemas
 };
